@@ -1,0 +1,17 @@
+.card-container div:last-child {
+  margin-bottom: 0 !important;
+}
+
+.product-image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.product-price {
+  text-decoration: line-through;
+}
+
+.restitute-status {
+  gap: 1.5rem;
+}

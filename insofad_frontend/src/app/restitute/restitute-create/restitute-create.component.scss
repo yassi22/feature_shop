@@ -1,0 +1,18 @@
+.card-container div:last-child {
+  margin-bottom: 0 !important;
+}
+
+.selected-products {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.product-image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.product-price {
+  text-decoration: line-through;
+}

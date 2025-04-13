@@ -1,0 +1,96 @@
+<section class="h-100 h-custom">
+    <h1>Order History</h1>
+    <p *ngIf="!isLoading && orders.length">Would you like to return your products? <a [routerLinkActive]="['active']" routerLink="/restitutes/create">Click here</a>.</p>
+    <p *ngIf="!isLoading && !orders.length">No orders available...</p>
+    <br>
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 mb-4" *ngFor="let order of orders; trackBy: trackByOrder">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h5 class="mb-3">ID: {{ order.orderId }}</h5>
+                            <hr>
+                            <div class="card-container">
+                                <div *ngFor="let orderProduct of order.orderProducts; trackBy: trackByOrderProduct" class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div class="me-3">
+                                                    <img src="{{ orderProduct.imageUrl }}" class="product-image img-fluid rounded-3 resource-img" alt="{{ orderProduct.name }}">
+                                                </div>
+                                                <div class="me-3">
+                                                    <h5>{{ orderProduct.name }}</h5>
+                                                    <ul>
+                                                        <li *ngFor="let variant of orderProduct.orderProductVariants; trackBy: trackByVariant">
+                                                            <span><strong>{{ variant.name }}:</strong> {{ variant.orderOptions[0]?.name }} (+ {{ variant.orderOptions[0]?.added_price || 0 | currency }})</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div>
+                                                    <h5 class="mx-3 mb-0">{{ cartService.calculateTotalPrice(orderProduct) | currency }}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="order.giftCards && order.giftCards.length > 0" class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div class="me-3">
+                                                    <h5>Gift Card</h5>
+                                                    <p *ngFor="let giftCard of order.giftCards; trackBy: trackByGiftCard">Code: {{ giftCard.code }}, Amount: {{ giftCard.amount | currency }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="order.topUps && order.topUps.length > 0" class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="d-flex flex-row align-items-center">
+                                                <div class="me-3">
+                                                    <h5>Top Up</h5>
+                                                    <p *ngFor="let topUp of order.topUps">Code: {{ topUp.giftCardCode }}, Amount: {{ topUp.topUpAmount | currency }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="card bg-light bg-gradient text-black rounded-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">Order details</h5>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Order date:</p>
+                                        <p class="mb-2">{{ order.datum | date: 'fullDate' }}</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Products:</p>
+                                        <p class="mb-2">{{ order.orderProducts.length }}</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Shipping fee:</p>
+                                        <p class="mb-2">{{ 4.95 | currency }}</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Total price:</p>
+                                        <p class="mb-2">{{ order.orderPrice | currency }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

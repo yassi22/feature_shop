@@ -1,0 +1,150 @@
+<section class="h-100 h-custom">
+    <h1>Cart</h1>
+    <div *ngIf="products_in_cart.length > 0 || giftCards_in_cart.length > 0 || topUpsInCart.length > 0; else emptyCart">
+        <p>View all the products in your cart.</p>
+        <br>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <form (submit)="onSubmit()">
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <div class="card-container">
+                                        <div *ngFor="let product of products_in_cart; let i = index" class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div class="me-3">
+                                                            <img [src]="product.imageUrl" class="product-image img-fluid rounded-3 resource-img" alt="{{ product.name }}">
+                                                        </div>
+                                                        <div class="me-3">
+                                                            <h5>{{ product.name }}</h5>
+                                                            <ul>
+                                                                <li *ngFor="let variant of product.variants; let j = index">
+                                                                    <span *ngIf="variant.options.length > 0"><strong>{{ variant.name }}:</strong> {{ variant.options[0]?.name }} (+ {{ variant.options[0]?.added_price || 0 | currency }})</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <h5 class="mb-0 me-3">
+                                                            <span class="product-price">{{ calculateProductPrice(product) | currency }}</span>
+                                                        </h5>
+                                                        <div>
+                                                            <a (click)="removeProductFromCart(i)" class="text-danger remove-btn">Remove</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div *ngFor="let giftCard of giftCards_in_cart; let k = index" class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div class="me-3">
+                                                            <h5>Gift Card</h5>
+                                                            <p>Recipient: {{ giftCard.recipientEmail }}</p>
+                                                            <p>Amount: {{ giftCard.amount | currency }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div>
+                                                            <a (click)="removeGiftCardFromCart(k)" class="text-danger remove-btn">Remove</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div *ngFor="let topUp of topUpsInCart; let l = index" class="card mb-3">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div class="me-3">
+                                                            <h5>Top Up</h5>
+                                                            <p>Gift Card Code: {{ topUp.giftCardCode }}</p>
+                                                            <p>Amount: {{ topUp.topUpAmount | currency }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-row align-items-center">
+                                                        <div>
+                                                            <a (click)="removeTopUpFromCart(l)" class="text-danger remove-btn">Remove</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="card bg-light bg-gradient text-black rounded-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 class="mb-0">Cart details</h5>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Products:</p>
+                                                <p class="mb-2">{{ products_in_cart.length }}</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Shipping fee:</p>
+                                                <p class="mb-2">{{ shippingCosts | currency:'EUR' }}</p>
+                                            </div>
+                                            <div *ngIf="appliedPromoCode" class="d-flex justify-content-between">
+                                                <p class="mb-2">Discount ({{ appliedPromoCode }}):</p>
+                                                <p class="mb-2">-{{ discountAmount | currency:'EUR' }}</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Total price:</p>
+                                                <p class="mb-2">{{ (totalPrice) | currency:'EUR' }}</p>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 class="mb-0">Promocode</h5>
+                                            </div>
+                                            <hr class="my-3">
+                                            <form class="d-flex align-items-center promocode-container" (ngSubmit)="onCheckPromoCode(promoCode)">
+                                                <div style="margin-bottom: 20px" class="flex-grow-1">
+                                                    <input type="text" id="promoCode" class="form-control" [(ngModel)]="promoCode" name="promoCode" placeholder="Enter promocode...">
+                                                </div>
+                                                <button style="margin-bottom: 20px" type="submit" class="btn btn-primary flex-shrink-0 align-self-end">Apply Code</button>
+                                            </form>
+
+                                            <form class="d-flex align-items-center" (ngSubmit)="applyGiftCard(giftCardCode)">
+                                                <div style="margin-bottom: 20px; flex-grow: 1;">
+                                                    <input type="text" id="giftCardCode" class="form-control" [(ngModel)]="giftCardCode" name="giftCardCode" placeholder="Enter Gift Card Code">
+                                                </div>
+                                                <button style="margin-bottom: 20px;" type="submit" class="btn btn-primary flex-shrink-0 align-self-end">Apply Gift Card</button>
+                                            </form>
+
+                                            <div *ngIf="appliedGiftCard.length !== 0" class="card mb-4">
+                                                <div class="card-body" *ngFor="let appliedGiftCard of appliedGiftCard;">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-10">
+                                                            <p class="lead mb-1">Applied Gift Card</p>
+                                                            <p>Balance Remaining: {{ appliedGiftCard.balance | currency: 'EUR' }}</p>
+                                                            <p>Code: {{ appliedGiftCard.code }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button [disabled]="!canPlaceOrder()" type="submit" class="btn btn-primary">Place Order</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-template #emptyCart>
+        <p>Your cart is empty.</p>
+    </ng-template>
+</section>

@@ -1,0 +1,91 @@
+<section class="h-100 h-custom">
+    <h1>Restitute History</h1>
+    @if (!isLoading && restitutes.length) {
+        <p>View all your restitutes.</p>
+        <br>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            @for (restitute of restitutes; track $index) {
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <h5 class="mb-3">ID: {{ restitute.id }}</h5>
+                                    <hr>
+                                    <div class="card-container">
+                                        @for (product of restitute.products; track $index) {
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="d-flex flex-row align-items-center">
+                                                            <div class="me-3">
+                                                                <img
+                                                                        src="{{ product.imageUrl }}"
+                                                                        class="product-image img-fluid rounded-3 resource-img" alt="{{ product.name }}">
+                                                            </div>
+                                                            <div class="me-3">
+                                                                <h5>{{ product.name }}</h5>
+                                                                <ul>
+                                                                    <li>
+                                                                        <span><strong>Damage:</strong> {{ product.damage }}</span>
+                                                                    </li>
+
+                                                                    @for (variant of product.orderProductVariants; track $index) {
+                                                                        <li>
+                                                                            <span><strong>{{ variant.name }}:</strong> {{ variant.orderOptions[0]?.name }} (+ {{ variant.orderOptions[0]?.added_price || 0 | currency }})</span>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex flex-row align-items-center">
+                                                            <h5 class="mb-0">
+                                                                @if (product.damage && product.damage !== RestituteDamage.UNDAMAGED) {
+                                                                <span class="product-price">({{ cartService.calculateTotalPrice(product) | currency }})</span>
+                                                                }
+
+                                                                {{ restituteService.calculatePriceWithDamage(product) | currency }}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="card bg-light bg-gradient text-black rounded-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 class="mb-0">Restitute details</h5>
+                                            </div>
+                                            <hr class="my-3">
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Restitute status:</p>
+                                                <p class="mb-2">{{ restitute.status }}</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Restitute date:</p>
+                                                <p class="mb-2">{{ restitute.createdAt | date: 'fullDate' }}</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Products:</p>
+                                                <p class="mb-2">{{ restitute.products.length }}</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="mb-2">Total price:</p>
+                                                <p class="mb-2">&euro;{{ restitute.totalPrice }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    } @else {
+        <p>No restitutes available...</p>
+    }
+</section>

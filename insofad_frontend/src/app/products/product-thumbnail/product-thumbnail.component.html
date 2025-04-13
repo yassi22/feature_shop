@@ -1,0 +1,20 @@
+<div class="card d-flex flex-column">
+    <div class="card-body">
+        <img class="productImage" src="{{ product.imageUrl }}" alt="{{ product.name }}">
+        <h5>{{ product.name }}</h5>
+        <p>{{ product.price | currency }}</p>
+        <p>
+            <small>{{ product.category }}</small>
+        </p>
+        <p>
+            <small>{{ product.description }}</small>
+        </p>
+        <p>
+            <small>{{ product.fitting }}</small>
+        </p>
+    </div>
+    <div class="card-footer mt-auto">
+        <a [routerLink]="[product.id]" aria-label="Meer zien" class="btn btn-secondary ps-3 ms-5">Meer zien</a>
+    </div>
+</div>
+
